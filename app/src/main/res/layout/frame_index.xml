@@ -100,9 +100,9 @@
 
                 </LinearLayout>
             </LinearLayout>
-<!--
-中间
--->
+            <!--
+            中间
+            -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -142,7 +142,6 @@
                             android:text="最近一笔">
 
                         </TextView>
-
                     </LinearLayout>
 
                     <LinearLayout
@@ -196,12 +195,13 @@
                             android:textStyle="bold"
                             android:textSize="18sp"
                             android:text="本周"></TextView>
+
                         <TextView
                             android:id="@+id/week"
-                            android:layout_weight="1"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="50dp"
                             android:layout_marginLeft="32dp"
+                            android:layout_weight="1"
                             android:text="week">
 
                         </TextView>
@@ -371,39 +371,7 @@
             android:layout_width="match_parent"
             android:background="@color/black"
             />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/index"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:drawableTop="@drawable/datail16"
-                android:gravity="center"
-                android:text="首页"
-                app:backgroundTint="#03A9F4"></Button>
-
-            <Button
-                android:id="@+id/add"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="记一笔"
-                app:backgroundTint="#FFC107"></Button>
-
-            <Button
-                android:id="@+id/detail"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:drawableTop="@drawable/settings32"
-                android:layout_weight="1"
-                android:text="明细"
-                ></Button>
-        </LinearLayout>
 
 
     </LinearLayout>

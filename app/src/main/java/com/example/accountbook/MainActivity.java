@@ -1,19 +1,33 @@
 package com.example.accountbook;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.accountbook.R;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.viewpager);
+
+        ViewPager2 viewPager = findViewById(R.id.viewPage2);
+        MyPageAdapter pageAdapter = new MyPageAdapter(this);
+        viewPager.setAdapter(pageAdapter);
+        String[] catalogue ={"首页","记一笔","明细"};
+        TabLayout tabLayout = findViewById(R.id.tab_layout);
+        new TabLayoutMediator(tabLayout, viewPager,
+                (tab, position) -> tab.setText(catalogue[position])
+        ).attach();
+    /*
         //获取下拉框控件
         Spinner spinner =findViewById(R.id.monthspinner);
         spinner.toString();
@@ -34,8 +48,11 @@ public class MainActivity extends AppCompatActivity {
         //本年
         TextView year = findViewById(R.id.year);
         TextView yearcost = findViewById(R.id.yearcost);
-        TextView yearincome = findViewById(R.id.year);
+        TextView yearincome = findViewById(R.id.yearincome);
 
-
+        Button detail =findViewById(R.id.index);
+        Button add =findViewById(R.id.add);
+        Button settings =findViewById(R.id.detail);
+*/
     }
 }
