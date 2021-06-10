@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">记账本</string>
+    <string name="app_name">秋哥记账365</string>
     <string-array name="spingarr">
         <item>1</item>
         <item>2</item>
