@@ -20,10 +20,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.viewpager);
+        setContentView(R.layout.activity_main);
 
         ViewPager2 viewPager = findViewById(R.id.viewPage2);
-        MyPageAdapter pageAdapter = new MyPageAdapter(this);
+        MyPageAdapter pageAdapter = new MyPageAdapter(this);//适配器方法
         viewPager.setAdapter(pageAdapter);
 
         TabLayout tabLayout = findViewById(R.id.tab_layout);

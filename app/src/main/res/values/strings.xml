@@ -14,6 +14,10 @@
         <item>11</item>
         <item>12</item>
     </string-array>
+    <string-array name="addstr">
+        <item>支出</item>
+        <item>收入</item>
+    </string-array>
     <string name="zoro_str">0.00</string>
     <string name="title_activity_add">MainActivity</string>
     <string name="title_home">Home</string>
