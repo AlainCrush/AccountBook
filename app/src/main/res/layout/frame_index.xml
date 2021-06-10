@@ -48,7 +48,7 @@
 
                         <Spinner
                             android:id="@+id/monthspinner"
-                            android:layout_width="100dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:entries="@array/spingarr"
                             android:gravity="center" />
@@ -56,7 +56,7 @@
                         <TextView
                             android:layout_width="120sp"
                             android:layout_height="match_parent"
-                            android:gravity="center"
+                            android:gravity="center_vertical"
                             android:text="月·支出"
                             android:textSize="18sp"></TextView>
                     </LinearLayout>
