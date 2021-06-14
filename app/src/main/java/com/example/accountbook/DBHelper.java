@@ -21,7 +21,8 @@ public class DBHelper extends SQLiteOpenHelper {
     }
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(" CREATE TABLE "+ TB_NAME +"(ID INTEGER PRIMARY KEY AUTOINCREMENT,CURNAME TEXT,CURRATE TEXT)");//创建数据库
+        db.execSQL(" CREATE TABLE "+ TB_NAME +"(ID INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "DATE TEXT,SUM TEXT,TYPE TEXT,REMARKS TEXT)");//创建数据库
     }
 
     @Override

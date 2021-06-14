@@ -3,7 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".AddFragment"
+    android:background="@drawable/bg2">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,7 +15,7 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:orientation="horizontal">
 
             <TextView
@@ -23,12 +25,28 @@
                 android:text="类型:"
                 android:gravity="center">
             </TextView>
+
             <Spinner
-                android:id="@+id/spinner"
-                android:layout_width="match_parent"
+                android:id="@+id/costspinner"
+                android:layout_width="wrap_content"
                 android:layout_height="30dp"
                 android:entries="@array/addstr"
-                android:spinnerMode="dialog"/>
+                android:spinnerMode="dialog" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:text="金额:"
+                android:gravity="center">
+            </TextView>
+
+            <EditText
+                android:id="@+id/SUM"
+                android:layout_width="91dp"
+                android:layout_height="match_parent"
+                android:inputType="numberDecimal"
+                android:text=""></EditText>
 
         </LinearLayout>
         <LinearLayout
@@ -43,9 +61,10 @@
             </TextView>
 
             <DatePicker
-                android:id="@+id/datePicker"
+                android:id="@+id/adddatePicker"
                 android:layout_width="match_parent"
-                android:layout_height="390dp" />
+                android:layout_height="390dp"
+                android:datePickerMode="spinner"/>
 
         </LinearLayout>
         <LinearLayout
@@ -57,6 +76,7 @@
                 android:text="备注：">
             </TextView>
             <EditText
+                android:id="@+id/textArea"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="start">
@@ -68,6 +88,7 @@
             android:layout_height="50dp">
 
             <Button
+                android:id="@+id/submit"
                 android:layout_width="100dp"
                 android:layout_height="50dp"
                 android:text="提交"
