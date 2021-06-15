@@ -2,14 +2,14 @@ package com.example.accountbook;
 
 public class DBItem {
     private int id;
-    private String date,sum,type,remarks;
-
+    private String date,type,remarks;
+    private Float money;
     public DBItem() {
         super();
         date="";
-        sum="";
         type="";
         remarks="";
+        money=0f;
     }
     public int getId() {
         return id;
@@ -27,12 +27,12 @@ public class DBItem {
         this.date = date;
     }
 
-    public String getSum() {
-        return sum;
+    public Float getMoney() {
+        return money;
     }
 
-    public void setSum(String sum) {
-        this.sum = sum;
+    public void setMoney(Float money) {
+        this.money = money;
     }
 
     public String getType() {

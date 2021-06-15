@@ -56,27 +56,30 @@ public class AddFragment extends Fragment implements DatePicker.OnDateChangedLis
         Button button = getActivity().findViewById(R.id.submit);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String date = String.valueOf(year)+"-"+String.valueOf(monthOfYear)+"-"+String.valueOf(dayOfMonth);
+                String date = String.valueOf(year)+"-"+String.valueOf(monthOfYear+1)+"-"+String.valueOf(dayOfMonth);
 
                 Log.i(TAG, "date: "+date);
 
                 record =new ArrayList<DBItem>();
                 DBItem dbItem = new DBItem();
                 dbItem.setDate(date);
-                dbItem.setSum(editText.getText().toString());
+                dbItem.setMoney(Float.valueOf(editText.getText().toString()));
+
+                Log.i(TAG, "SSSSS: "+Float.valueOf(editText.getText().toString()));
+
                 dbItem.setType(spinner.getSelectedItem().toString());
                 dbItem.setRemarks(editTextArea.getText().toString());
                 record.add(dbItem);
 
                 for(DBItem i : record ){
-                    Log.i(TAG, "date: "+i.getDate()+" sum: "+i.getSum()+" type: "+i.getType()+" remarks: "+i.getRemarks());
+                    Log.i(TAG, "date: "+i.getDate()+" sum: "+i.getMoney()+" type: "+i.getType()+" remarks: "+i.getRemarks());
                 }
 
                 //添加
                 DBManager dbManager = new DBManager(getActivity());
                 dbManager.addRecord(record);
 
-                Log.i(TAG, "最新一条: "+"date: "+dbManager.listLatest().getDate()+" sum: "+dbManager.listLatest().getSum()+
+                Log.i(TAG, "最新一条: "+"date: "+dbManager.listLatest().getDate()+" sum: "+dbManager.listLatest().getMoney()+
                         " type: "+dbManager.listLatest().getType()+" remarks: "+dbManager.listLatest().getRemarks());
 
             }

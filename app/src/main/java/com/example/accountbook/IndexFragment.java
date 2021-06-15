@@ -1,6 +1,7 @@
 package com.example.accountbook;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,9 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
+import java.util.Calendar;
+import java.util.Date;
+
 public class IndexFragment extends Fragment {
     Spinner spinner;
     TextView textView1,textView2;
@@ -18,6 +22,7 @@ public class IndexFragment extends Fragment {
     TextView mt,mt1,mt2;
     TextView yt,yt1,yt2;
     EditText editText;
+    private static final String TAG = "IndexFragment";
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -53,5 +58,23 @@ public class IndexFragment extends Fragment {
         yt2 = getActivity().findViewById(R.id.yearincome);
 
 
+        Date date = new Date();
+        String noyear =String.valueOf(date.getYear()+1900);
+        String monthstr = spinner.getSelectedItem().toString();
+
+        DBManager db = new DBManager(getActivity());
+
+        String[] IncomeArgs = {"收入",noyear+"-"+monthstr+"-"};
+        String[] CostArgs = {"支出",noyear+"-"+monthstr+"-"};
+
+        String totalcost =String.valueOf(db.CountSum(CostArgs).getMoney());
+        String totalincome =String.valueOf(db.CountSum(IncomeArgs).getMoney());
+
+        Log.i(TAG, "onActivityCreated: totalcost"+totalcost);
+        Log.i(TAG, "onActivityCreated: totalincome"+totalincome);
+        textView1.setText(totalcost);
+        textView2.setText(totalincome);
+
+        dt.setText("最近一笔 "+db.listLatest().getType()+" : "+db.listLatest().getRemarks()+" "+db.listLatest().getMoney());
         }
     }
