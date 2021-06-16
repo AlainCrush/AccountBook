@@ -4,10 +4,12 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 public class DBManager {
     private DBHelper dbHelper;
@@ -18,32 +20,32 @@ public class DBManager {
     String remarks = "REMARKS";
 
 
-    public DBManager(Context context){
+    public DBManager(Context context) {
 
         this.dbHelper = new DBHelper(context);
-        TBNAME =DBHelper.TB_NAME;
+        TBNAME = DBHelper.TB_NAME;
     }
 
     //添加记录
-    public void addRecord(ArrayList<DBItem> list){
+    public void addRecord(ArrayList<DBItem> list) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        for(DBItem item : list){
+        for (DBItem item : list) {
             ContentValues values = new ContentValues();
-            values.put(date,item.getDate());
-            values.put(money,item.getMoney());
-            values.put(type,item.getType());
-            values.put(remarks,item.getRemarks());
-            db.insert(TBNAME,null,values);
+            values.put(date, item.getDate());
+            values.put(money, item.getMoney());
+            values.put(type, item.getType());
+            values.put(remarks, item.getRemarks());
+            db.insert(TBNAME, null, values);
         }
         db.close();
     }
 
-    public DBItem Find(String selection,String[] selectionArgs){
+    public DBItem Find(String selection, String[] selectionArgs) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor =db.query(TBNAME,null,selection,selectionArgs,null,null,null);
+        Cursor cursor = db.query(TBNAME, null, selection, selectionArgs, null, null, null);
         DBItem dbItem = null;
-        if (cursor!=null&&cursor.moveToFirst()){
-            dbItem=new DBItem();
+        if (cursor != null && cursor.moveToFirst()) {
+            dbItem = new DBItem();
             //通过游标查询索引来查询值
             dbItem.setDate(cursor.getString(cursor.getColumnIndex(date)));
             dbItem.setMoney(cursor.getFloat(cursor.getColumnIndex(money)));
@@ -51,8 +53,8 @@ public class DBManager {
             dbItem.setRemarks(cursor.getString(cursor.getColumnIndex(remarks)));
 
             cursor.close();///关闭游标
-        }else {
-            dbItem=new DBItem();
+        } else {
+            dbItem = new DBItem();
             dbItem.setDate("");
             dbItem.setMoney(0f);
             dbItem.setType("");
@@ -63,34 +65,55 @@ public class DBManager {
     }
 
 
-    public DBItem CountSum(String[] sqlArgs){
+    public DBItem CountSum(String[] sqlArgs) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String sql="select SUM(MONEY) from"+TBNAME+"where TYPE=? and DATE like ? group by ID";
-        Cursor cursor =db.rawQuery(sql,sqlArgs);
+        String sql = "select SUM(MONEY) from " + TBNAME + " where TYPE=? and DATE like ? group by ID";
+        Cursor cursor = db.rawQuery(sql, sqlArgs);
         DBItem dbItem = null;
-        if (cursor!=null&&cursor.moveToFirst()){
-            dbItem=new DBItem();
+        if (cursor != null && cursor.moveToFirst()) {
+            dbItem = new DBItem();
             //通过游标查询索引来查询值
-            dbItem.setMoney(cursor.getFloat(cursor.getColumnIndex(money)));
+            dbItem.setMoney(cursor.getFloat(cursor.getColumnIndex("SUM(MONEY)")));
 
             cursor.close();///关闭游标
-        }else {
-            dbItem=new DBItem();
+        } else {
+            dbItem = new DBItem();
             dbItem.setMoney(0f);
+            Log.i("这里为空：", "CountSum: 空值");
         }
         db.close();
         return dbItem;
     }
 
-    public DBItem listLatest(){
+    public DBItem listLatest() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(TBNAME,null,null,null,null,null,null);
+        Cursor cursor = db.query(TBNAME, null, null, null, null, null, null);
         DBItem dbItem = null;
-        if (cursor!=null){
-            dbItem = Find("ID=?",new String[]{String.valueOf(cursor.getCount())});
+        if (cursor != null) {
+            dbItem = Find("ID=?", new String[]{String.valueOf(cursor.getCount())});
+        }
+        cursor.close();///关闭游标
+        db.close();
+        return dbItem;
+    }
+
+    public List<DBItem> listAll() {
+        List<DBItem> list = null;
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(TBNAME, null, null, null, null, null, null);
+        if (cursor != null ) {
+            list = new ArrayList<DBItem>();
+            while (cursor.moveToNext()) {
+                DBItem dbItem = new DBItem();
+                dbItem.setDate(cursor.getString(cursor.getColumnIndex("DATE")));
+                dbItem.setType(cursor.getString(cursor.getColumnIndex("TYPE")));
+                dbItem.setMoney(cursor.getFloat(cursor.getColumnIndex("MONEY")));
+                dbItem.setRemarks(cursor.getString(cursor.getColumnIndex("REMARKS")));
+                list.add(dbItem);
             }
             cursor.close();///关闭游标
+        }
         db.close();
-        return  dbItem;
+        return list;
     }
 }

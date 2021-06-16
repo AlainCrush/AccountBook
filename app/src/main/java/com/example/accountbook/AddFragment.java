@@ -2,6 +2,9 @@ package com.example.accountbook;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +18,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 public class AddFragment extends Fragment implements DatePicker.OnDateChangedListener {
@@ -79,8 +83,15 @@ public class AddFragment extends Fragment implements DatePicker.OnDateChangedLis
                 DBManager dbManager = new DBManager(getActivity());
                 dbManager.addRecord(record);
 
-                Log.i(TAG, "最新一条: "+"date: "+dbManager.listLatest().getDate()+" sum: "+dbManager.listLatest().getMoney()+
-                        " type: "+dbManager.listLatest().getType()+" remarks: "+dbManager.listLatest().getRemarks());
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("提示")
+                        .setMessage("您已成功提交数据")
+                        .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        });
+                builder.create().show();
 
             }
         });

@@ -6,13 +6,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DetailFragment extends Fragment {
-    Button btquery,btupdate;
+    Button btupdate;
+    TextView tw_date,tw_type,tw_money,tw_remarks;
     private static final String TAG = "DetailFragment";
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -27,14 +31,17 @@ public class DetailFragment extends Fragment {
     }
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        btquery = getActivity().findViewById(R.id.detail_query);
-        btupdate=getActivity().findViewById(R.id.detail_update);
-        btquery.setOnClickListener(new View.OnClickListener() {
+        tw_date = getActivity().findViewById(R.id.query_date);
+        tw_type = getActivity().findViewById(R.id.query_type);
+        tw_money = getActivity().findViewById(R.id.query_money);
+        tw_remarks = getActivity().findViewById(R.id.query_remarks);
+        btupdate = getActivity().findViewById(R.id.detail_update);
+
+        DBManager db = new DBManager(getActivity());
+        ArrayList<DBItem> list = (ArrayList<DBItem>)db.listAll();
+
+        btupdate.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String selections = "DATE like ?";
-                String selectionArgs[]={"2021-6-%"};
-                DBManager db = new DBManager(getActivity());
-                Log.i(TAG, "onClick: ++++++"+db.Find(selections,selectionArgs).getDate()+"有输出");
 
             }
         });
