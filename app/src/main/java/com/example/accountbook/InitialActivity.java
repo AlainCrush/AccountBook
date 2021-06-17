@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Window;
 import android.view.WindowManager;
 
 public class InitialActivity extends AppCompatActivity {
@@ -12,7 +13,7 @@ public class InitialActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_initial);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAGS_CHANGED);//隐藏状态栏
+        //getWindow().addFlags(WindowManager.LayoutParams.FLAGS_CHANGED);//隐藏状态栏
         Thread thread =new Thread(){
             public void run(){
                 try {

@@ -105,6 +105,7 @@ public class DBManager {
             list = new ArrayList<DBItem>();
             while (cursor.moveToNext()) {
                 DBItem dbItem = new DBItem();
+                dbItem.setId(cursor.getInt(cursor.getColumnIndex("ID")));
                 dbItem.setDate(cursor.getString(cursor.getColumnIndex("DATE")));
                 dbItem.setType(cursor.getString(cursor.getColumnIndex("TYPE")));
                 dbItem.setMoney(cursor.getFloat(cursor.getColumnIndex("MONEY")));
