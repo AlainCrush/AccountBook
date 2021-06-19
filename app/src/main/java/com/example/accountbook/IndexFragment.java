@@ -45,18 +45,20 @@ public class IndexFragment extends Fragment{
         Date date = new Date();
         String noyear = String.valueOf(date.getYear() + 1900);
         String nomonth = String.valueOf(date.getMonth()+1);
+        String noday= String.valueOf(date.getDay()+1);
         textView1 = getActivity().findViewById(R.id.totalcost);
         String[] CostArgs = {"支出", noyear + "-" + nomonth + "-"+"%"};//模糊查询一定要加在字符串数组里加入 百分号%
         spinner = getActivity().findViewById(R.id.monthspinner);
         spinner.setSelection(date.getMonth(),true);
+        //Spinner设置监听
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String info=adapterView.getItemAtPosition(i).toString();//获取i所在的文本
                 DBManager dbManager = new DBManager(getActivity());
                 String[] spinnerArgs = {"支出", noyear + "-" + info + "-"+"%"};
-                String spinnerlcost = String.valueOf(dbManager.CountSum(spinnerArgs).getMoney());
-                textView1.setText(spinnerlcost);
+                String spinnercost = String.valueOf(dbManager.CountSum(spinnerArgs).getMoney());
+                textView1.setText(spinnercost);
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
@@ -66,6 +68,7 @@ public class IndexFragment extends Fragment{
             }
         });
 
+
         DBManager db = new DBManager(getActivity());
         textView2 = getActivity().findViewById(R.id.monthlyincome);
         String[] IncomeArgs = {"收入", noyear + "-" + nomonth + "-"+"%"};
@@ -74,19 +77,17 @@ public class IndexFragment extends Fragment{
 
         editText = getActivity().findViewById(R.id.monthlyavailability);
         String etext = editText.getText().toString();
-        if (!etext.equals("0.00")) {
+        if (!etext.equals("0.0")) {
             editText.setText(String.valueOf(Float.valueOf(etext) - db.CountSum(CostArgs).getMoney()));
         }
 
         dt = getActivity().findViewById(R.id.latest);
         dt.setText("最近一笔 " + db.listLatest().getType() + " : " + db.listLatest().getRemarks() + " " + db.listLatest().getMoney());
-        SimpleDateFormat dd = new SimpleDateFormat("yyyy-MM-dd");
         dt1 = getActivity().findViewById(R.id.tdcost);
-        String[] dt1Args = {"支出", dd.format(date)+"%"};
-
+        String[] dt1Args = {"支出", noyear+"-"+nomonth+"-"+noday+"%"};
         dt1.setText(String.valueOf(db.CountSum(dt1Args).getMoney()));
         dt2 = getActivity().findViewById(R.id.tdincome);
-        String[] dt2Args = {"收入", dd.format(date)+"%"};
+        String[] dt2Args = {"收入", noyear+"-"+nomonth+"-"+noday+"%"};
         dt2.setText(String.valueOf(db.CountSum(dt2Args).getMoney()));
 
         wt = getActivity().findViewById(R.id.week);
@@ -95,6 +96,7 @@ public class IndexFragment extends Fragment{
 
 
         mt = getActivity().findViewById(R.id.month);
+        mt.setText(nomonth+" 月");
         mt1 = getActivity().findViewById(R.id.monthcost);
         mt1.setText(String.valueOf(db.CountSum(CostArgs).getMoney()));
         mt2 = getActivity().findViewById(R.id.monthincome);
@@ -102,9 +104,10 @@ public class IndexFragment extends Fragment{
 
 
         yt = getActivity().findViewById(R.id.year);
+        yt.setText(noyear+" 年");
         yt1 = getActivity().findViewById(R.id.yearcost);
         String[] yt1Args={"支出",noyear+"-"+"%"};
-        yt1.setText(String.valueOf(db.CountSum(yt1Args).getMoney()));
+        yt1.setText(String.valueOf(db.CountSum(yt1Args).getMoney()));//18.5
         yt2 = getActivity().findViewById(R.id.yearincome);
         String[] yt2Args={"收入",noyear+"-"+"%"};
         yt2.setText(String.valueOf(db.CountSum(yt2Args).getMoney()));

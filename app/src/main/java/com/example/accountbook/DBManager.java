@@ -19,6 +19,7 @@ public class DBManager {
     String type = "TYPE";
     String remarks = "REMARKS";
 
+    private static final String TAG = "DBManager";
 
     public DBManager(Context context) {
 
@@ -67,7 +68,8 @@ public class DBManager {
 
     public DBItem CountSum(String[] sqlArgs) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String sql = "select SUM(MONEY) from " + TBNAME + " where TYPE=? and DATE like ? group by ID";
+        String sql = "select SUM(MONEY) from " + TBNAME + " where TYPE=? and DATE like ?";
+        Log.i(TAG, "CountSum: sql: "+sql);
         Cursor cursor = db.rawQuery(sql, sqlArgs);
         DBItem dbItem = null;
         if (cursor != null && cursor.moveToFirst()) {
