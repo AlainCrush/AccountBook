@@ -19,8 +19,6 @@ public class DBManager {
     String type = "TYPE";
     String remarks = "REMARKS";
 
-    private static final String TAG = "DBManager";
-
     public DBManager(Context context) {
 
         this.dbHelper = new DBHelper(context);
@@ -46,8 +44,8 @@ public class DBManager {
         Cursor cursor = db.query(TBNAME, null, selection, selectionArgs, null, null, null);
         DBItem dbItem = null;
         if (cursor != null && cursor.moveToFirst()) {
-            dbItem = new DBItem();
             //通过游标查询索引来查询值
+            dbItem = new DBItem();
             dbItem.setDate(cursor.getString(cursor.getColumnIndex(date)));
             dbItem.setMoney(cursor.getFloat(cursor.getColumnIndex(money)));
             dbItem.setType(cursor.getString(cursor.getColumnIndex(type)));
@@ -69,19 +67,20 @@ public class DBManager {
     public DBItem CountSum(String[] sqlArgs) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String sql = "select SUM(MONEY) from " + TBNAME + " where TYPE=? and DATE like ?";
-        Log.i(TAG, "CountSum: sql: "+sql);
         Cursor cursor = db.rawQuery(sql, sqlArgs);
         DBItem dbItem = null;
         if (cursor != null && cursor.moveToFirst()) {
-            dbItem = new DBItem();
             //通过游标查询索引来查询值
+            dbItem = new DBItem();
             dbItem.setMoney(cursor.getFloat(cursor.getColumnIndex("SUM(MONEY)")));
 
             cursor.close();///关闭游标
         } else {
             dbItem = new DBItem();
+            dbItem.setDate("");
             dbItem.setMoney(0f);
-            Log.i("这里为空：", "CountSum: 空值");
+            dbItem.setType("");
+            dbItem.setRemarks("");
         }
         db.close();
         return dbItem;
@@ -93,8 +92,16 @@ public class DBManager {
         DBItem dbItem = null;
         if (cursor != null) {
             dbItem = Find("ID=?", new String[]{String.valueOf(cursor.getCount())});
+
+            cursor.close();///关闭游标
+        } else {
+            dbItem = new DBItem();
+            dbItem.setDate("");
+            dbItem.setMoney(0f);
+            dbItem.setType("");
+            dbItem.setRemarks("");
         }
-        cursor.close();///关闭游标
+
         db.close();
         return dbItem;
     }
@@ -103,10 +110,11 @@ public class DBManager {
         List<DBItem> list = null;
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.query(TBNAME, null, null, null, null, null, null);
-        if (cursor != null ) {
+        DBItem dbItem = null;
+        if (cursor != null) {
             list = new ArrayList<DBItem>();
             while (cursor.moveToNext()) {
-                DBItem dbItem = new DBItem();
+                dbItem = new DBItem();
                 dbItem.setId(cursor.getInt(cursor.getColumnIndex("ID")));
                 dbItem.setDate(cursor.getString(cursor.getColumnIndex("DATE")));
                 dbItem.setType(cursor.getString(cursor.getColumnIndex("TYPE")));
@@ -115,8 +123,36 @@ public class DBManager {
                 list.add(dbItem);
             }
             cursor.close();///关闭游标
+        } else {
+            dbItem = new DBItem();
+            dbItem.setDate("");
+            dbItem.setMoney(0f);
+            dbItem.setType("");
+            dbItem.setRemarks("");
         }
         db.close();
         return list;
+    }
+
+    public Float weekSum(String type, List<String> list) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Float sum = 0f;
+        for (String i : list) {
+            sum += Find("TYPE=? and DATE=?", new String[]{type, i}).getMoney();
+        }
+        db.close();
+        return sum;
+    }
+
+    public void delete(int id) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        db.delete(TBNAME, "ID=?", new String[]{String.valueOf(id)});
+        db.close();
+    }
+
+    public void deleteAll() {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.delete(TBNAME, null, null);
+        db.close();
     }
 }

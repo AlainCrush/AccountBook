@@ -1,6 +1,14 @@
 package com.example.accountbook;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.InputType;
+import android.text.SpannableStringBuilder;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,16 +22,18 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-public class IndexFragment extends Fragment{
+public class IndexFragment extends Fragment {
     Spinner spinner;
-    TextView textView1, textView2;
+    TextView textView1, textView2, textView3, budget;
     TextView dt, dt1, dt2;
     TextView wt, wt1, wt2;
     TextView mt, mt1, mt2;
     TextView yt, yt1, yt2;
-    EditText editText;
+    String budget_SP_KEY = "Budget";
 
     private static final String TAG = "IndexFragment";
 
@@ -44,72 +54,131 @@ public class IndexFragment extends Fragment{
 
         Date date = new Date();
         String noyear = String.valueOf(date.getYear() + 1900);
-        String nomonth = String.valueOf(date.getMonth()+1);
-        String noday= String.valueOf(date.getDay()+1);
+        String nomonth = String.valueOf(date.getMonth() + 1);
+        String noday = String.valueOf(date.getDay() + 1);
+        String[] CostArgs = {"支出", noyear + "-" + nomonth + "-" + "%"};//模糊查询一定要加在字符串数组里加入 百分号%
         textView1 = getActivity().findViewById(R.id.totalcost);
-        String[] CostArgs = {"支出", noyear + "-" + nomonth + "-"+"%"};//模糊查询一定要加在字符串数组里加入 百分号%
+        DBManager db = new DBManager(getActivity());
+
+        textView1.setText(String.valueOf(db.CountSum(CostArgs).getMoney()));
         spinner = getActivity().findViewById(R.id.monthspinner);
-        spinner.setSelection(date.getMonth(),true);
+        spinner.setSelection(date.getMonth(), true);
         //Spinner设置监听
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String info=adapterView.getItemAtPosition(i).toString();//获取i所在的文本
-                DBManager dbManager = new DBManager(getActivity());
-                String[] spinnerArgs = {"支出", noyear + "-" + info + "-"+"%"};
-                String spinnercost = String.valueOf(dbManager.CountSum(spinnerArgs).getMoney());
+                String info = adapterView.getItemAtPosition(i).toString();//获取i所在的文本
+                String[] spinnerArgs = {"支出", noyear + "-" + info + "-" + "%"};
+                String spinnercost = String.valueOf(db.CountSum(spinnerArgs).getMoney());
                 textView1.setText(spinnercost);
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                DBManager dbManager = new DBManager(getActivity());
-                String spinnerlcost = String.valueOf(dbManager.CountSum(CostArgs).getMoney());
-                textView1.setText(spinnerlcost);
+//
             }
         });
 
 
-        DBManager db = new DBManager(getActivity());
         textView2 = getActivity().findViewById(R.id.monthlyincome);
-        String[] IncomeArgs = {"收入", noyear + "-" + nomonth + "-"+"%"};
+        String[] IncomeArgs = {"收入", noyear + "-" + nomonth + "-" + "%"};
         String totalincome = String.valueOf(db.CountSum(IncomeArgs).getMoney());
         textView2.setText(totalincome);
 
-        editText = getActivity().findViewById(R.id.monthlyavailability);
-        String etext = editText.getText().toString();
-        if (!etext.equals("0.0")) {
-            editText.setText(String.valueOf(Float.valueOf(etext) - db.CountSum(CostArgs).getMoney()));
-        }
+        textView3 = getActivity().findViewById(R.id.monthlyavailability);
+        //从SharePreferences里取数据
+        SharedPreferences sp = getActivity().getSharedPreferences("Budget", Context.MODE_PRIVATE);
+        String budgetText = sp.getString(budget_SP_KEY, "0.0");
+        textView3.setText(budgetText);
 
+        //给预算设置监听，点击后可以通过对话框设置预算，可以设置以及重置
+        budget = getActivity().findViewById(R.id.budget);
+        budget.setClickable(true);
+        budget.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final EditText editText = new EditText(getActivity());
+                editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);//限制输入类型为数值型，且可以输入一位小数
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("请输入预算:")
+                        .setView(editText)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                if (editText.getText() != null) {
+                                    Log.i(TAG, "onClick: EditText: " + editText.getText().toString());
+                                    float a = Float.valueOf(editText.getText().toString());
+                                    String textStr = String.valueOf(a - db.CountSum(CostArgs).getMoney());
+                                    textView3.setText(textStr);
+                                    //把这个预算存起来
+                                    SharedPreferences sp = getActivity().getSharedPreferences("Budget", Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = sp.edit();
+                                    editor.putString(budget_SP_KEY, textStr);
+                                    editor.apply();
+                                }
+                            }
+                        })
+                        .setNegativeButton("取消", null)
+                        .setNeutralButton("重置预算", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                SharedPreferences sp = getActivity().getSharedPreferences("Budget", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sp.edit();
+                                editor.putString(budget_SP_KEY, "0.0");
+                                editor.apply();
+                                textView3.setText("0.0");
+                            }
+
+                        });
+                builder.create().show();
+            }
+        });
+
+        //处理今天部分
         dt = getActivity().findViewById(R.id.latest);
         dt.setText("最近一笔 " + db.listLatest().getType() + " : " + db.listLatest().getRemarks() + " " + db.listLatest().getMoney());
         dt1 = getActivity().findViewById(R.id.tdcost);
-        String[] dt1Args = {"支出", noyear+"-"+nomonth+"-"+noday+"%"};
+        String[] dt1Args = {"支出", noyear + "-" + nomonth + "-" + noday + "%"};
         dt1.setText(String.valueOf(db.CountSum(dt1Args).getMoney()));
         dt2 = getActivity().findViewById(R.id.tdincome);
-        String[] dt2Args = {"收入", noyear+"-"+nomonth+"-"+noday+"%"};
+        String[] dt2Args = {"收入", noyear + "-" + nomonth + "-" + noday + "%"};
         dt2.setText(String.valueOf(db.CountSum(dt2Args).getMoney()));
 
+        //处理本周部分
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-dd");
         wt = getActivity().findViewById(R.id.week);
+        //获得本周日期表
+        GetWeeklyInterval gwi = new GetWeeklyInterval();
+        List<Date> weekList =gwi.getWeekList();
+        //转化成字符串表
+        List<String> weekListStr = new ArrayList<String>();
+        for(Date i: weekList){
+            weekListStr.add(sdf.format(i));
+        }
+
+        wt.setText(weekListStr.get(0)+"~"+weekListStr.get(6));
         wt1 = getActivity().findViewById(R.id.weekcost);
+        wt1.setText(String.valueOf(db.weekSum("支出",weekListStr)));
         wt2 = getActivity().findViewById(R.id.weekincome);
+        wt2.setText(String.valueOf(db.weekSum("收入",weekListStr)));
 
-
+        //处理本月部分
         mt = getActivity().findViewById(R.id.month);
-        mt.setText(nomonth+" 月");
+        mt.setText(nomonth + " 月");
         mt1 = getActivity().findViewById(R.id.monthcost);
         mt1.setText(String.valueOf(db.CountSum(CostArgs).getMoney()));
         mt2 = getActivity().findViewById(R.id.monthincome);
         mt2.setText(String.valueOf(db.CountSum(IncomeArgs).getMoney()));
 
-
+        //处理本年部分
         yt = getActivity().findViewById(R.id.year);
-        yt.setText(noyear+" 年");
+        yt.setText(noyear + " 年");
         yt1 = getActivity().findViewById(R.id.yearcost);
-        String[] yt1Args={"支出",noyear+"-"+"%"};
-        yt1.setText(String.valueOf(db.CountSum(yt1Args).getMoney()));//18.5
+        String[] yt1Args = {"支出", noyear + "-" + "%"};
+        yt1.setText(String.valueOf(db.CountSum(yt1Args).getMoney()));
         yt2 = getActivity().findViewById(R.id.yearincome);
-        String[] yt2Args={"收入",noyear+"-"+"%"};
+        String[] yt2Args = {"收入", noyear + "-" + "%"};
         yt2.setText(String.valueOf(db.CountSum(yt2Args).getMoney()));
 
 
