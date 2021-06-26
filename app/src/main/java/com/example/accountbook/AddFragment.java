@@ -28,7 +28,6 @@ public class AddFragment extends Fragment implements DatePicker.OnDateChangedLis
     DatePicker dp;
     int year, monthOfYear, dayOfMonth;
     ArrayList<DBItem> record;
-    private static final String TAG = "AddFragment";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,23 +60,15 @@ public class AddFragment extends Fragment implements DatePicker.OnDateChangedLis
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String date = String.valueOf(year)+"-"+String.valueOf(monthOfYear+1)+"-"+String.valueOf(dayOfMonth);
-
-                Log.i(TAG, "date: "+date);
-
                 record =new ArrayList<DBItem>();
                 DBItem dbItem = new DBItem();
                 dbItem.setDate(date);
                 dbItem.setMoney(Float.valueOf(editText.getText().toString()));
 
-                Log.i(TAG, "SSSSS: "+Float.valueOf(editText.getText().toString()));
 
                 dbItem.setType(spinner.getSelectedItem().toString());
                 dbItem.setRemarks(editTextArea.getText().toString());
                 record.add(dbItem);
-
-                for(DBItem i : record ){
-                    Log.i(TAG, "date: "+i.getDate()+" sum: "+i.getMoney()+" type: "+i.getType()+" remarks: "+i.getRemarks());
-                }
 
                 //添加
                 DBManager dbManager = new DBManager(getActivity());
@@ -89,6 +80,8 @@ public class AddFragment extends Fragment implements DatePicker.OnDateChangedLis
                         .setPositiveButton("确认", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                editText.setText("");
+                                editTextArea.setText("");
                             }
                         });
                 builder.create().show();

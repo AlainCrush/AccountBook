@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class DetailFragment extends Fragment {
-    private static final String TAG = "DetailFragment";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

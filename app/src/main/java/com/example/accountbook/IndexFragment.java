@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,8 +35,8 @@ public class IndexFragment extends Fragment {
     TextView mt, mt1, mt2;
     TextView yt, yt1, yt2;
     String budget_SP_KEY = "Budget";
+    ImageButton imb;
 
-    private static final String TAG = "IndexFragment";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,7 +52,18 @@ public class IndexFragment extends Fragment {
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        show();
+        imb = getActivity().findViewById(R.id.imageButtom);
+        imb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                show();
+            }
+        });
 
+    }
+
+    public void show(){
         Date date = new Date();
         String noyear = String.valueOf(date.getYear() + 1900);
         String nomonth = String.valueOf(date.getMonth() + 1);
@@ -89,7 +101,11 @@ public class IndexFragment extends Fragment {
         //从SharePreferences里取数据
         SharedPreferences sp = getActivity().getSharedPreferences("Budget", Context.MODE_PRIVATE);
         String budgetText = sp.getString(budget_SP_KEY, "0.0");
-        textView3.setText(budgetText);
+        if (db.CountSum(CostArgs).getMoney()==0f){
+            textView3.setText("0.00");
+        }
+        String textStr = String.valueOf(Float.valueOf(budgetText) - db.CountSum(CostArgs).getMoney());
+        textView3.setText(textStr);
 
         //给预算设置监听，点击后可以通过对话框设置预算，可以设置以及重置
         budget = getActivity().findViewById(R.id.budget);
@@ -107,14 +123,13 @@ public class IndexFragment extends Fragment {
                             public void onClick(DialogInterface dialog, int which) {
 
                                 if (editText.getText() != null) {
-                                    Log.i(TAG, "onClick: EditText: " + editText.getText().toString());
                                     float a = Float.valueOf(editText.getText().toString());
                                     String textStr = String.valueOf(a - db.CountSum(CostArgs).getMoney());
                                     textView3.setText(textStr);
                                     //把这个预算存起来
                                     SharedPreferences sp = getActivity().getSharedPreferences("Budget", Context.MODE_PRIVATE);
                                     SharedPreferences.Editor editor = sp.edit();
-                                    editor.putString(budget_SP_KEY, textStr);
+                                    editor.putString(budget_SP_KEY, String.valueOf(a));
                                     editor.apply();
                                 }
                             }
@@ -180,7 +195,5 @@ public class IndexFragment extends Fragment {
         yt2 = getActivity().findViewById(R.id.yearincome);
         String[] yt2Args = {"收入", noyear + "-" + "%"};
         yt2.setText(String.valueOf(db.CountSum(yt2Args).getMoney()));
-
-
     }
 }
