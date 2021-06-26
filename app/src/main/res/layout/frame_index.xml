@@ -62,7 +62,7 @@
 
                         <ImageButton
                             android:id="@+id/imageButtom"
-                            android:layout_width="53dp"
+                            android:layout_width="47dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:background="#5D0096"

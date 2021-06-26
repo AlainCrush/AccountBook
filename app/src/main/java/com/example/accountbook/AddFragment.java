@@ -80,8 +80,9 @@ public class AddFragment extends Fragment implements DatePicker.OnDateChangedLis
                         .setPositiveButton("确认", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                editText.setText("");
+                                editText.setText("0.0");
                                 editTextArea.setText("");
+
                             }
                         });
                 builder.create().show();

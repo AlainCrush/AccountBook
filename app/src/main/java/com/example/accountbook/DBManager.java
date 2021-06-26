@@ -39,20 +39,21 @@ public class DBManager {
         db.close();
     }
 
-    public DBItem Find(String selection, String[] selectionArgs) {
+    public DBItem find(String selection, String[] selectionArgs) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.query(TBNAME, null, selection, selectionArgs, null, null, null);
         DBItem dbItem = null;
         if (cursor != null && cursor.moveToFirst()) {
-            //通过游标查询索引来查询值
             dbItem = new DBItem();
+            Log.i("里面", "Find: 里面");
+            //通过游标查询索引来查询值
             dbItem.setDate(cursor.getString(cursor.getColumnIndex(date)));
             dbItem.setMoney(cursor.getFloat(cursor.getColumnIndex(money)));
             dbItem.setType(cursor.getString(cursor.getColumnIndex(type)));
             dbItem.setRemarks(cursor.getString(cursor.getColumnIndex(remarks)));
-
             cursor.close();///关闭游标
         } else {
+            Log.i("dsada", "Find: 外面");
             dbItem = new DBItem();
             dbItem.setDate("");
             dbItem.setMoney(0f);
@@ -63,8 +64,7 @@ public class DBManager {
         return dbItem;
     }
 
-
-    public DBItem CountSum(String[] sqlArgs) {
+    public DBItem countSum(String[] sqlArgs) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String sql = "select SUM(MONEY) from " + TBNAME + " where TYPE=? and DATE like ?";
         Cursor cursor = db.rawQuery(sql, sqlArgs);
@@ -74,7 +74,6 @@ public class DBManager {
             dbItem = new DBItem();
             dbItem.setMoney(cursor.getFloat(cursor.getColumnIndex("SUM(MONEY)")));
 
-            cursor.close();///关闭游标
         } else {
             dbItem = new DBItem();
             dbItem.setDate("");
@@ -82,18 +81,18 @@ public class DBManager {
             dbItem.setType("");
             dbItem.setRemarks("");
         }
+        cursor.close();///关闭游标
         db.close();
         return dbItem;
     }
 
-    public DBItem listLatest() {
+    /*public DBItem listLatest() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.query(TBNAME, null, null, null, null, null, null);
         DBItem dbItem = null;
         if (cursor != null) {
-            dbItem = Find("ID=?", new String[]{String.valueOf(cursor.getCount())});
+           dbItem = find("ID=?", new String[]{String.valueOf(cursor.getCount())});
 
-            cursor.close();///关闭游标
         } else {
             dbItem = new DBItem();
             dbItem.setDate("");
@@ -101,10 +100,11 @@ public class DBManager {
             dbItem.setType("");
             dbItem.setRemarks("");
         }
+        cursor.close();///关闭游标
 
         db.close();
         return dbItem;
-    }
+    }*/
 
     public List<DBItem> listAll() {
         List<DBItem> list = null;
@@ -122,7 +122,6 @@ public class DBManager {
                 dbItem.setRemarks(cursor.getString(cursor.getColumnIndex("REMARKS")));
                 list.add(dbItem);
             }
-            cursor.close();///关闭游标
         } else {
             dbItem = new DBItem();
             dbItem.setDate("");
@@ -130,6 +129,7 @@ public class DBManager {
             dbItem.setType("");
             dbItem.setRemarks("");
         }
+        cursor.close();///关闭游标
         db.close();
         return list;
     }
@@ -138,7 +138,8 @@ public class DBManager {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Float sum = 0f;
         for (String i : list) {
-            sum += Find("TYPE=? and DATE=?", new String[]{type, i}).getMoney();
+            sum += find("TYPE=? and DATE=?", new String[]{type, i}).getMoney();
+            Log.i("TAG", "weekSum: ++"+i);
         }
         db.close();
         return sum;
