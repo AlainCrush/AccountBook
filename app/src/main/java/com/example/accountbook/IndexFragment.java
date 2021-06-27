@@ -67,7 +67,7 @@ public class IndexFragment extends Fragment {
         Date date = new Date();
         String noyear = String.valueOf(date.getYear() + 1900);
         String nomonth = String.valueOf(date.getMonth() + 1);
-        String noday = String.valueOf(date.getDate()+1);
+        String noday = String.valueOf(date.getDate());
         Log.i("sd", "show: "+noyear);
         Log.i("sd", "show: "+nomonth);
         Log.i("sd", "show: "+noday);
